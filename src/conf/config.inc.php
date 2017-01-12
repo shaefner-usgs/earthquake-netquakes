@@ -9,3 +9,7 @@ if (!file_exists($CONFIG_INI_FILE)) {
 }
 
 $CONFIG = parse_ini_file($CONFIG_INI_FILE);
+
+$APP_DIR = $CONFIG['APP_DIR'];
+$DATA_DIR = $CONFIG['DATA_DIR'];
+$MOUNT_PATH = $CONFIG['MOUNT_PATH'];

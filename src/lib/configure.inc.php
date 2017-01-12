@@ -13,8 +13,17 @@ $PROMPTS = array(
     'prompt' => 'URL Path for application',
     'default' => '/monitoring/netquakes',
     'secure' => false
+  ),
+  'APP_DIR' => array(
+    'prompt' => 'Absolute path to application root directory',
+    'default' => $APP_DIR,
+    'secure' => false
+  ),
+  'DATA_DIR' => array(
+    'prompt' => 'Absolute path to application data directory',
+    'default' => str_replace('/apps/', '/data/', $APP_DIR),
+    'secure' => false
   )
-
 );
 
 
