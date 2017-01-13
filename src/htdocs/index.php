@@ -2,6 +2,7 @@
 
 if (!isset($TEMPLATE)) {
   $TITLE = 'NetQuakes';
+  $NAVIGATION = true;
   $HEAD = '<link rel="stylesheet" href="css/index.css" />';
   $FOOT = '';
 
@@ -11,7 +12,7 @@ if (!isset($TEMPLATE)) {
 ?>
 
 <figure class="right">
-  <img src="img/JHamilton.jpg" alt="Photo of John Hamilton" />
+  <img src="netquakes/img/JHamilton.jpg" alt="Photo of John Hamilton" />
   <figcaption>John Hamilton, USGS Scientist, installs a NetQuakes
     instrument at the San Jose Earthquakes Stadium. Photo by
     Scott Haefner, USGS.
@@ -33,14 +34,14 @@ if (!isset($TEMPLATE)) {
 
 <h2>View Data</h2>
 
-<p>The most recent <a href="map/">triggered activity at each seismograph</a> is available online.</p>
+<p>The most recent <a href="netquakes/map">triggered activity at each seismograph</a> is available online.</p>
 
 <h2>Sign Up</h2>
 
 <p>Currently, we are unable to purchase additional instruments,
   so we don&rsquo;t anticipate performing many new installations.
   However, if you&rsquo;d like to host a seismograph, we will continue
-  <a href="signup/">collecting names and addresses</a> so that if more
+  <a href="netquakes/signup">collecting names and addresses</a> so that if more
   become available, we will be able to place them in the most effective
   locations.</p>
 
@@ -51,4 +52,4 @@ if (!isset($TEMPLATE)) {
 
 <h2>FAQ</h2>
 
-<p><a href="faq.php">Frequently Asked Questions</a></p>
+<p><a href="netquakes/faq.php">Frequently Asked Questions</a></p>
