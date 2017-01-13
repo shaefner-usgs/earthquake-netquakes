@@ -39,7 +39,20 @@ var connect = {
 
   rules: [
     {
-      from: '^' + MOUNT_PATH + '/(.*)$',
+      from: '^(' + MOUNT_PATH + ')(.*)/+$',
+      to: 'http://localhost:' + config.buildPort + '$1$2', // strip final '/'
+      redirect: 'permanent'
+    },
+    {
+      from: '^' + MOUNT_PATH + '/map',
+      to: '/map.php'
+    },
+    {
+      from: '^' + MOUNT_PATH + '/signup',
+      to: '/signup.php'
+    },
+    {
+      from: '^' + MOUNT_PATH + '/?(.*)$',
       to: '/$1'
     }
   ],
