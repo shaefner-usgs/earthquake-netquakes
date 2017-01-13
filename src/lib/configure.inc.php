@@ -23,6 +23,21 @@ $PROMPTS = array(
     'prompt' => 'Absolute path to application data directory',
     'default' => str_replace('/apps/', '/data/', $APP_DIR),
     'secure' => false
+  ),
+  'DB_DSN' => array(
+    'prompt' => 'Database connection DSN string',
+    'default' => 'mysql:host=localhost;port=3306;dbname=dbname',
+    'secure' => false
+  ),
+  'DB_USER' => array(
+    'prompt' => 'Read-only username for database connections',
+    'default' => 'web',
+    'secure' => false
+  ),
+  'DB_PASS' => array(
+    'prompt' => 'Password for database user',
+    'default' => '',
+    'secure' => true
   )
 );
 
