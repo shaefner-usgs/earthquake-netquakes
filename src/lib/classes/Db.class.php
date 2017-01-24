@@ -71,19 +71,31 @@ class Db {
     return $type;
   }
 
-  public function queryStations () {
-    $sql = 'SELECT * FROM netq_inst
-      WHERE `type` = "NQ"
-      ORDER BY `site`, `loc` ASC';
+  public function queryEvents () {
+    $sql = 'SELECT * FROM `netq_trigs`
+      WHERE evtid != "" AND delete_flag = 0
+      GROUP BY `evtid`
+      ORDER BY `evttime` DESC';
 
     return $this->_execQuery($sql);
   }
 
-  public function queryEvents () {
-    $sql = 'SELECT * FROM netq_trigs
-      WHERE evtid != "" AND delete_flag = 0
-      GROUP BY `evtid`
-      ORDER BY `evttime` DESC';
+  public function querySignupPoints () {
+    $sql = 'SELECT * FROM `netq_req_point`';
+
+    return $this->_execQuery($sql);
+  }
+
+  public function querySignupPolys () {
+    $sql = 'SELECT * FROM `netq_req_polygon`';
+
+    return $this->_execQuery($sql);
+  }
+
+  public function queryStations () {
+    $sql = 'SELECT * FROM `netq_inst`
+      WHERE `type` = "NQ"
+      ORDER BY `site`, `loc` ASC';
 
     return $this->_execQuery($sql);
   }
