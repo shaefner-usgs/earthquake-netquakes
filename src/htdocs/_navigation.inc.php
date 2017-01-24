@@ -13,7 +13,7 @@ if (preg_match("@^$section(/index.php)?$@", $url)) {
 $NAVIGATION =
   navGroup('NetQuakes',
     navItem("$section", 'Overview', $matches_index) .
-    navItem("$section/map", 'View data') .
+    navItem("$section/data", 'View data') .
     navItem("$section/signup", 'Sign up') .
     navItem("$section/faq.php", 'FAQ')
   );

@@ -44,8 +44,8 @@ var connect = {
       redirect: 'permanent'
     },
     {
-      from: '^' + MOUNT_PATH + '/map',
-      to: '/map.php'
+      from: '^' + MOUNT_PATH + '/data',
+      to: '/data.php'
     },
     {
       from: '^' + MOUNT_PATH + '/signup',
