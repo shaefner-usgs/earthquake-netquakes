@@ -1,8 +1,22 @@
 'use strict';
 
 
-var SignupMap = require('map/SignupMap');
+var SignupForm = require('SignupForm'),
+    SignupMap = require('map/SignupMap');
 
-SignupMap({
-  el: document.querySelector('.map')
-});
+var form,
+    map;
+
+map = document.querySelector('.map');
+if (map) {
+  SignupMap({
+    el: map
+  });
+}
+
+form = document.querySelector('form');
+if (form) {
+  SignupForm({
+    el: form
+  });
+}
