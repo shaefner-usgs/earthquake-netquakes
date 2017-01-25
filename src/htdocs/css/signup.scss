@@ -1,1 +1,29 @@
-@import 'map/_leaflet.scss'
+@import 'map/_leaflet.scss';
+
+.column {
+  position: relative;
+
+  h3 {
+    margin: 2em 0 1.5em;
+    white-space: nowrap;
+  }
+}
+
+.disabled {
+  display: none;
+}
+
+.note {
+  position: absolute;
+  font-size: .8em;
+  top: 3.25em;
+  line-height: .85;
+}
+
+.required, label span {
+  color: #c00;
+}
+
+.submitted input:invalid {
+  border-color: #c00;
+}
