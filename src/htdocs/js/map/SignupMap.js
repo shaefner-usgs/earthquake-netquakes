@@ -7,8 +7,8 @@ var Xhr = require('util/Xhr');
 // Factories for creating map layers (returns e.g. "L.earthquakesLayer()")
 require('map/DarkLayer');
 require('map/GreyscaleLayer');
+require('map/RequestedLayer');
 require('map/SatelliteLayer');
-require('map/SignupLayer');
 require('map/TerrainLayer');
 
 
@@ -20,11 +20,11 @@ var SignupMap = function (options) {
       _initialize,
 
       _el,
-      _signup,
+      _requested,
 
       _getMapLayers,
       _initMap,
-      _loadSignupLayer;
+      _loadRequestedLayer;
 
 
   _this = {};
@@ -33,8 +33,8 @@ var SignupMap = function (options) {
     options = options || {};
     _el = options.el || document.createElement('div');
 
-    // Load signup layer which calls initMap() when finished
-    _loadSignupLayer();
+    // Load requested layer which calls initMap() when finished
+    _loadRequestedLayer();
   };
 
   /**
@@ -67,21 +67,21 @@ var SignupMap = function (options) {
       'Dark': dark
     };
     layers.overlays = {
-      'Requested sites': _signup,
+      'Requested sites': _requested,
     };
-    layers.defaults = [terrain, _signup];
+    layers.defaults = [terrain, _requested];
 
     return layers;
   };
 
   /**
-   * Load signup layer from geojson data via ajax
+   * Load requested sites layer from geojson data via ajax
    */
-  _loadSignupLayer = function () {
+  _loadRequestedLayer = function () {
     Xhr.ajax({
-      url: MOUNT_PATH + '/_getSignupPointsPolys.json.php',
+      url: MOUNT_PATH + '/_getRequested.json.php',
       success: function (data) {
-        _signup = L.signupLayer({
+        _requested = L.requestedLayer({
           data: data
         });
         _initMap();
@@ -108,8 +108,8 @@ var SignupMap = function (options) {
       scrollWheelZoom: false
     });
 
-    // Set intial map extent to contain signup overlay
-    bounds = _signup.getBounds();
+    // Set intial map extent to contain requested sites overlay
+    bounds = _requested.getBounds();
     map.fitBounds(bounds);
 
     // Add controllers

@@ -10,8 +10,8 @@ $now = date(DATE_RFC2822);
 $db = new Db;
 
 // Db query results: points and polys
-$rsPoints = $db->querySignupPoints();
-$rsPolys = $db->querySignupPolys();
+$rsPoints = $db->queryRequestedPoints();
+$rsPolys = $db->queryRequestedPolys();
 
 // Initialize array template for json feed
 $output = [

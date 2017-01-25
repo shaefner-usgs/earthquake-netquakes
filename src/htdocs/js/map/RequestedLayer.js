@@ -22,7 +22,7 @@ _DEFAULTS = {
 };
 
 /**
- * Factory for signup overlay (points, polys)
+ * Factory for Requested Sites overlay (points, polys)
  *
  * @param options {Object}
  *     {
@@ -31,7 +31,7 @@ _DEFAULTS = {
  *
  * @return {L.FeatureGroup}
  */
-var SignupLayer = function (options) {
+var RequestedLayer = function (options) {
   var _this,
       _initialize,
 
@@ -116,6 +116,6 @@ var SignupLayer = function (options) {
 };
 
 
-L.signupLayer = SignupLayer;
+L.requestedLayer = RequestedLayer;
 
-module.exports = SignupLayer;
+module.exports = RequestedLayer;

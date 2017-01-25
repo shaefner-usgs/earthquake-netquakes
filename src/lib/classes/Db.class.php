@@ -80,13 +80,13 @@ class Db {
     return $this->_execQuery($sql);
   }
 
-  public function querySignupPoints () {
+  public function queryRequestedPoints () {
     $sql = 'SELECT * FROM `netq_req_point`';
 
     return $this->_execQuery($sql);
   }
 
-  public function querySignupPolys () {
+  public function queryRequestedPolys () {
     $sql = 'SELECT * FROM `netq_req_polygon`';
 
     return $this->_execQuery($sql);
