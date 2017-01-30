@@ -71,6 +71,11 @@ class Db {
     return $type;
   }
 
+  /**
+   * Get event list
+   *
+   * @return {Function}
+   */
   public function queryEvents () {
     $sql = 'SELECT * FROM `netq_trigs`
       WHERE evtid != "" AND delete_flag = 0
@@ -80,22 +85,50 @@ class Db {
     return $this->_execQuery($sql);
   }
 
+  /**
+   * Get instrument list
+   *
+   * @return {Function}
+   */
+  public function queryInstruments () {
+    $sql = 'SELECT * FROM netq_inst
+      WHERE `type`="NQ"';
+
+    return $this->_execQuery($sql);
+  }
+
+  /**
+   * Get plots
+   *
+   * @return {Function}
+   */
+  public function queryPlots () {
+    $sql = 'SELECT `site`, `file`, MAX(`datetime`) AS `datetime`
+      FROM netq_trigs
+      WHERE `type` != "CAL"
+      GROUP BY `site`';
+
+    return $this->_execQuery($sql);
+  }
+
+  /**
+   * Get requested points
+   *
+   * @return {Function}
+   */
   public function queryRequestedPoints () {
     $sql = 'SELECT * FROM `netq_req_point`';
 
     return $this->_execQuery($sql);
   }
 
+  /**
+   * Get requested polygons
+   *
+   * @return {Function}
+   */
   public function queryRequestedPolys () {
     $sql = 'SELECT * FROM `netq_req_polygon`';
-
-    return $this->_execQuery($sql);
-  }
-
-  public function queryStations () {
-    $sql = 'SELECT * FROM `netq_inst`
-      WHERE `type` = "NQ"
-      ORDER BY `site`, `loc` ASC';
 
     return $this->_execQuery($sql);
   }
