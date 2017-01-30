@@ -8,8 +8,8 @@ var MOUNT_PATH = config.ini.MOUNT_PATH;
 
 var addMiddleware = function (connect, options, middlewares) {
   middlewares.unshift(
-    require('grunt-connect-rewrite/lib/utils').rewriteRequest,
     require('grunt-connect-proxy/lib/utils').proxyRequest,
+    require('grunt-connect-rewrite/lib/utils').rewriteRequest,
     require('gateway')(options.base[0], {
       '.php': 'php-cgi',
       'env': {
@@ -28,6 +28,11 @@ var connect = {
 
   proxies: [
     {
+      context: config.ini.MOUNT_PATH + '/data', // data on dev server
+      host: config.ini.DATA_HOST,
+      port: 80
+    },
+    {
       context: '/theme/',
       host: 'localhost',
       port: config.templatePort,
@@ -44,8 +49,8 @@ var connect = {
       redirect: 'permanent'
     },
     {
-      from: '^' + MOUNT_PATH + '/data',
-      to: '/data.php'
+      from: '^' + MOUNT_PATH + '/viewdata',
+      to: '/viewdata.php'
     },
     {
       from: '^' + MOUNT_PATH + '/signup',
