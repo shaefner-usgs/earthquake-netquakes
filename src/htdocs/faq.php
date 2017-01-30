@@ -218,7 +218,7 @@ the data will be ignored but still visible to you on the Web site.
 Where can I see the data recorded by my NetQuakes seismograph?
 </h4>
 <p>
-Images of the previous 30 days of triggered accelerograms from your instrument are available under <a href="map">View Data</a> on this web site.
+Images of the previous 30 days of triggered accelerograms from your instrument are available under <a href="data">View Data</a> on this web site.
 </p>
 
 <a name="datause" id="datause"></a><h4>
@@ -293,7 +293,7 @@ The tiny yellow LED labeled &ldquo;event&rdquo; will light for ~1-2 minutes indi
 Then, the blue LED labeled &ldquo;link&rdquo; will light briefly indicating that communications have been
 established with one of the servers and the data are being uploaded.
 In a few minutes an image of the accelerograms from your instrument will appear
-on <a href="map">this web site</a>.
+on <a href="data">this web site</a>.
 If the instrument is malfunctioning, the USGS will notify you about replacing it.
 </p>
 

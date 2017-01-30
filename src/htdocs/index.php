@@ -34,7 +34,8 @@ if (!isset($TEMPLATE)) {
 
 <h2>View Data</h2>
 
-<p>The most recent <a href="netquakes/map">triggered activity at each seismograph</a> is available online.</p>
+<p>The most recent <a href="netquakes/data">triggered activity at each
+  seismograph</a> is available online.</p>
 
 <h2>Sign Up</h2>
 
