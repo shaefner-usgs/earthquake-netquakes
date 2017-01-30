@@ -6,8 +6,17 @@ include_once '../lib/classes/Db.class.php'; // db connector, queries
 if (!isset($TEMPLATE)) {
   $TITLE = 'Map of NetQuakes Instruments';
   $NAVIGATION = true;
-  $HEAD = '<link href="css/map.css" rel="stylesheet" />';
-  $FOOT = '';
+  $HEAD = '
+    <link rel="stylesheet" href="/lib/leaflet-0.7.7/leaflet.css" />
+    <link href="css/data.css" rel="stylesheet" />
+  ';
+  $FOOT = '
+    <script>
+      var MOUNT_PATH = "' . $MOUNT_PATH . '";
+    </script>
+    <script src="/lib/leaflet-0.7.7/leaflet.js"></script>
+    <script src="js/data.js"></script>
+  ';
   $CONTACT = 'jbrody';
 
   include 'template.inc.php';
@@ -15,19 +24,19 @@ if (!isset($TEMPLATE)) {
 
 $db = new Db;
 
-// Station list pulldown
-$rsStations = $db->queryStations();
+// Instrument list pulldown
+$rsInstruments = $db->queryInstruments();
 
-$stationList = '<select id="station" name="station">';
-while ($row = $rsStations->fetch(PDO::FETCH_ASSOC)) {
+$instrumentList = '<select id="instrument" name="instrument">';
+while ($row = $rsInstruments->fetch(PDO::FETCH_ASSOC)) {
   $value = sprintf('%s_%s_%s',
     $row['site'],
     $row['net'],
     $row['loc']
   );
-  $stationList .= "<option value=\"$value\">$value</option>";
+  $instrumentList .= "<option value=\"$value\">$value</option>";
 }
-$stationList .= '</select>';
+$instrumentList .= '</select>';
 
 // Event list pulldown
 $rsEvents = $db->queryEvents();
@@ -50,5 +59,5 @@ $eventList .= '</select>';
 
 <?php
 
-print $stationList;
+print $instrumentList;
 print $eventList;
