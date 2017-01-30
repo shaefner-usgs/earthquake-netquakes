@@ -8,14 +8,14 @@ if (!isset($TEMPLATE)) {
   $NAVIGATION = true;
   $HEAD = '
     <link rel="stylesheet" href="/lib/leaflet-0.7.7/leaflet.css" />
-    <link href="css/data.css" rel="stylesheet" />
+    <link href="css/viewdata.css" rel="stylesheet" />
   ';
   $FOOT = '
     <script>
       var MOUNT_PATH = "' . $MOUNT_PATH . '";
     </script>
     <script src="/lib/leaflet-0.7.7/leaflet.js"></script>
-    <script src="js/data.js"></script>
+    <script src="js/viewdata.js"></script>
   ';
   $CONTACT = 'jbrody';
 
