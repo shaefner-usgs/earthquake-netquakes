@@ -77,7 +77,7 @@ var InstrumentsLayer = function (options) {
     timestamp = props.datetime.replace(/[-: ]/g, '');
 
     if (props.file) {
-      imgLink = MOUNT_PATH + '/station/' + name + '/' + timestamp;
+      imgLink = MOUNT_PATH + '/viewdata/' + name + '/' + timestamp;
       imgSrc = MOUNT_PATH + '/data/trigs/' + props.file;
 
       img = '<a href="' + imgLink + '"><img src="' + imgSrc + '" /></a>';
@@ -86,7 +86,7 @@ var InstrumentsLayer = function (options) {
     data = {
       description: props.description,
       img: img,
-      link: MOUNT_PATH + '/station/' + name,
+      link: MOUNT_PATH + '/viewdata/' + name,
       name: name
     };
 
@@ -101,7 +101,7 @@ var InstrumentsLayer = function (options) {
     popup = L.Util.template(popupTemplate, data);
 
     layer.bindPopup(popup, {
-      autoPanPadding: L.point(50, 50)
+      autoPanPadding: L.point(50, 10)
     });
   };
 
