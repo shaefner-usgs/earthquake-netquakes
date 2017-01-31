@@ -90,7 +90,7 @@ var RequestedLayer = function (options) {
    * @param feature {Object}
    * @param latlng {L.LatLng}
    *
-   * @return marker {L.Marker}
+   * @return marker {L.Circle}
    */
   _pointToLayer = function (feature, latlng) {
     var code,
@@ -106,7 +106,7 @@ var RequestedLayer = function (options) {
     _createBounds(code);
     _bounds[code].extend(latlng);
 
-    return new L.Circle(latlng, radius, _overlayOptions);
+    return L.circle(latlng, radius, _overlayOptions);
   };
 
 

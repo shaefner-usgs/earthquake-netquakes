@@ -29,6 +29,7 @@ var SignupMap = function (options) {
 
   _this = {};
 
+
   _initialize = function (options) {
     options = options || {};
     _el = options.el || document.createElement('div');
@@ -75,24 +76,6 @@ var SignupMap = function (options) {
   };
 
   /**
-   * Load requested sites layer from geojson data via ajax
-   */
-  _loadRequestedLayer = function () {
-    Xhr.ajax({
-      url: MOUNT_PATH + '/_getRequested.json.php',
-      success: function (data) {
-        _requested = L.requestedLayer({
-          data: data
-        });
-        _initMap();
-      },
-      error: function (status) {
-        console.log(status);
-      }
-    });
-  };
-
-  /**
    * Create Leaflet map instance
    */
   _initMap = function () {
@@ -115,6 +98,24 @@ var SignupMap = function (options) {
     // Add controllers
     L.control.scale().addTo(map);
     L.control.layers(layers.baseLayers, layers.overlays).addTo(map);
+  };
+
+  /**
+   * Load requested sites layer from geojson data via ajax
+   */
+  _loadRequestedLayer = function () {
+    Xhr.ajax({
+      url: MOUNT_PATH + '/_getRequested.json.php',
+      success: function (data) {
+        _requested = L.requestedLayer({
+          data: data
+        });
+        _initMap();
+      },
+      error: function (status) {
+        console.log(status);
+      }
+    });
   };
 
   _initialize(options);
