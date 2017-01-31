@@ -36,7 +36,8 @@ var InstrumentsLayer = function (options) {
       _overlayOptions,
 
       _onEachFeature,
-      _pointToLayer;
+      _pointToLayer,
+      _showCount;
 
 
   _this = {};
@@ -45,6 +46,8 @@ var InstrumentsLayer = function (options) {
     options = Util.extend({}, _DEFAULTS, options);
 
     _overlayOptions = Util.extend({}, _OVERLAY_DEFAULTS, options.overlayOptions);
+
+    _showCount(options.data.count);
 
     _this = L.geoJson(options.data, {
       onEachFeature: _onEachFeature,
@@ -73,7 +76,7 @@ var InstrumentsLayer = function (options) {
     props = feature.properties;
     name = props.site + '_' + props.net + '_' + props.loc;
 
-    img = 'No data available'; // default
+    img = '<p class="nodata">No data available</p>'; // default
     timestamp = props.datetime.replace(/[-: ]/g, '');
 
     if (props.file) {
@@ -127,6 +130,18 @@ var InstrumentsLayer = function (options) {
     }
 
     return L.circleMarker(latlng, _overlayOptions);
+  };
+
+  /**
+   * Show instrument count on web page
+   *
+   * @param count {Integer}
+   */
+  _showCount = function (count) {
+    var el;
+
+    el = document.querySelector('.count');
+    el.innerHTML = count + ' instruments on this map';
   };
 
   _initialize(options);
