@@ -4,7 +4,7 @@ include_once '../conf/config.inc.php'; // app config
 include_once '../lib/classes/Db.class.php'; // db connector, queries
 
 if (!isset($TEMPLATE)) {
-  $TITLE = 'Map of NetQuakes Instruments';
+  $TITLE = 'NetQuakes Data';
   $NAVIGATION = true;
   $HEAD = '
     <link rel="stylesheet" href="/lib/leaflet-0.7.7/leaflet.css" />
@@ -53,11 +53,38 @@ $eventList .= '</select>';
 
 ?>
 
-<p>The USGS is trying to achieve a denser and more uniform spacing of seismographs in select urban areas. To accomplish this, we developed a new type of digital seismograph that transmits data to USGS via the internet after an earthquake. The instruments are designed to be installed in private homes, businesses, public buildings and schools.</p>
+<p>The USGS is working to achieve a denser and more uniform spacing of
+  seismographs in select urban areas. To accomplish this, we developed a
+  digital seismograph that is designed to be installed in private
+  homes, businesses, public buildings and schools. Data from these instruments
+  is transmitted to USGS after an earthquake, and can be viewed here.</p>
 
 <div class="map">Interactive Map</div>
+<ul class="legend no-style">
+  <li>
+    <svg>
+      <circle class="online" cx="8" cy="8" r="7" />
+    </svg>
+    <span>Healthy</span>
+  </li>
+  <li>
+    <svg>
+      <circle class="offline" cx="8" cy="8" r="7" />
+    </svg>
+    <span>Not communicating</span>
+  </li>
+  <li class="count"></li>
+</ul>
 
-<?php
-
-print $instrumentList;
-print $eventList;
+<div class="row viewdata">
+  <div class="column two-of-five">
+    <h2>Instrument List</h2>
+    <?php print $instrumentList; ?>
+    <button name="submit" class="green">View data</button>
+  </div>
+  <div class="column three-of-five">
+    <h2>Event List</h2>
+    <?php print $eventList; ?>
+    <button name="submit" class="green">View data</button>
+  </div>
+</div>
