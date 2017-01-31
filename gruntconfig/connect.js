@@ -28,7 +28,7 @@ var connect = {
 
   proxies: [
     {
-      context: config.ini.MOUNT_PATH + '/data', // data on dev server
+      context: MOUNT_PATH + '/data', // data on dev server
       host: config.ini.DATA_HOST,
       port: 80
     },
@@ -69,8 +69,7 @@ var connect = {
       ],
       livereload: config.liveReloadPort,
       middleware: addMiddleware,
-      open: 'http://localhost:' + config.buildPort +
-          MOUNT_PATH + '/index.php',
+      open: 'http://localhost:' + config.buildPort + MOUNT_PATH,
       port: config.buildPort
     }
   },
@@ -82,8 +81,7 @@ var connect = {
       ],
       port: config.distPort,
       keepalive: true,
-      open: 'http://localhost:' + config.distPort +
-          MOUNT_PATH + '/index.php',
+      open: 'http://localhost:' + config.distPort + MOUNT_PATH,
       middleware: addMiddleware
     }
   },
