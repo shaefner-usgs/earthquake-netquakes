@@ -98,17 +98,36 @@ class Db {
   }
 
   /**
-   * Get plots
+   * Get plots - latest plot for each instrument or all plots for a given instrument
+   *
+   * @param instrument {String}
+   *     optional parameter to get plots for a given instrument
    *
    * @return {Function}
    */
-  public function queryPlots () {
-    $sql = 'SELECT `site`, `file`, MAX(`datetime`) AS `datetime`
+  public function queryPlots ($instrument=NULL) {
+    $params = [];
+
+    if ($instrument) {
+      list(
+        $params['site'], $params['net'], $params['loc']
+      ) = explode('_', $instrument);
+      $sql = 'SELECT trigs.datetime, trigs.file, trigs.type, inst.description
+        FROM netq_trigs trigs
+        LEFT JOIN netq_inst inst ON trigs.site = inst.site
+          AND trigs.net = inst.net AND trigs.loc = inst.loc
+        WHERE trigs.site = :site AND trigs.net = :net AND trigs.loc = :loc
+          AND trigs.delete_flag = 0 AND trigs.type != "CAL"
+        ORDER BY `datetime` DESC';
+    }
+    else {
+      $sql = 'SELECT `site`, `file`, MAX(`datetime`) AS `datetime`
       FROM netq_trigs
       WHERE `type` != "CAL"
       GROUP BY `site`';
+    }
 
-    return $this->_execQuery($sql);
+    return $this->_execQuery($sql, $params);
   }
 
   /**
