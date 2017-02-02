@@ -6,6 +6,12 @@ include_once '../lib/classes/Db.class.php'; // db connector, queries
 
 $event = safeParam('event');
 
+// User submitted form w/o javascript; fwd to "friendly" (rewrite) URI
+if(isset($_GET['submit'])) {
+  $uri = "viewdata/$event";
+  header("Location: $uri");
+}
+
 if (!isset($TEMPLATE)) {
   $TITLE = 'NetQuakes Data';
   $NAVIGATION = true;
