@@ -94,7 +94,8 @@ class Db {
    */
   public function queryInstruments () {
     $sql = 'SELECT * FROM netq_inst
-      WHERE `type`="NQ"';
+      WHERE `type`="NQ"
+      ORDER BY `site`, `loc` ASC';
 
     return $this->_execQuery($sql);
   }
