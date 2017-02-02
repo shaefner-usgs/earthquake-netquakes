@@ -9,6 +9,7 @@ $instrument = safeParam('instrument');
 
 if (!isset($TEMPLATE)) {
   $TITLE = 'NetQuakes Data';
+  $NAVIGATION = true;
   $HEAD = '<link rel="stylesheet" href="../../css/seismogram.css" />';
   $FOOT = '';
 
