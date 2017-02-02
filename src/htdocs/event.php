@@ -48,11 +48,12 @@ while ($row = $rsPlots->fetch(PDO::FETCH_ASSOC)) {
 }
 $plotsHtml .= '</ul>';
 
+$link = 'https://earthquake.usgs.gov/earthquakes/eventpage/' . $event;
 $subTitle = sprintf('M %s Earthquake - %s UTC',
   $mag,
   date ('M j, Y H:i:s', $time)
 );
 
 print "<h2>$subTitle</h2>";
-
+print '<p><a href="' . $link . '">Earthquake Details</a></p>';
 print $plotsHtml;
