@@ -143,14 +143,14 @@ class Db {
       else if (isEvent($id)) { // get all plots matching event id
         $params['evtid'] = substr($id, 2); // id and network are stored separately
         $sql = 'SELECT * FROM netq_trigs
-          WHERE delete_flag = 0 AND evtid = :evtid AND type != "CAL"
+          WHERE delete_flag = 0 AND evtid = :evtid AND `type` != "CAL"
           ORDER BY evtdst ASC';
       }
     }
     else { // get all latest plots
       $sql = 'SELECT `site`, `file`, MAX(`datetime`) AS `datetime`
       FROM netq_trigs
-      WHERE `type` != "CAL"
+      WHERE `type` != "CAL" AND delete_flag = 0
       GROUP BY `site`';
     }
 
