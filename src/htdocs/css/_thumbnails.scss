@@ -1,0 +1,12 @@
+.seismograms {
+  display: flex;
+  flex-flow: row wrap;
+
+  h4 {
+    font-weight: normal;
+    text-align: center;
+  }
+  li {
+    margin-right: .5em;
+  }
+}
