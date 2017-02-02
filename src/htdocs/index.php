@@ -3,7 +3,7 @@
 if (!isset($TEMPLATE)) {
   $TITLE = 'NetQuakes';
   $NAVIGATION = true;
-  $HEAD = '<link rel="stylesheet" href="css/index.css" />';
+  //$HEAD = '<link rel="stylesheet" href="css/index.css" />';
   $FOOT = '';
 
   include 'template.inc.php';
