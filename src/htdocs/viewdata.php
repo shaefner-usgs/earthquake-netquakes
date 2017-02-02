@@ -87,7 +87,7 @@ $eventList .= '</select>';
   </div>
   <div class="column three-of-five">
     <form action="event.php" method="get" id="event">
-      <h2>Event List</h2>
+      <h2>Earthquake List</h2>
       <?php print $eventList; ?>
       <button class="green" form="event" name="submit" type="submit">View data</button>
     </form>
