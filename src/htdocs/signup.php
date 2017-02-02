@@ -126,7 +126,7 @@ if (isSet($_POST['submit'])) { // user submitted form
   <label for="toggle">My mailing address is different than the installation address.</label>
 </div>
 
-<form method="post" action="./signup" name="volunteer" id="volunteer">
+<form action="./signup" method="post" id="volunteer">
   <div class="row">
 
     <div class="column one-of-two">
@@ -198,5 +198,5 @@ if (isSet($_POST['submit'])) { // user submitted form
 
   </div>
   <p class="required">* = Required Info</p>
-  <button form="volunteer" name="submit" id="submit" class="green" tabindex="18">Volunteer</button>
+  <button class="green" form="volunteer" type="submit" tabindex="18">Volunteer</button>
 </form>
