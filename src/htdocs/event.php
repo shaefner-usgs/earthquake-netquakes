@@ -23,18 +23,17 @@ $rsPlots = $db->queryPlots($event);
 // Create HTML for plot thumbnails
 $plotsHtml = '<ul class="no-style seismograms">';
 while ($row = $rsPlots->fetch(PDO::FETCH_ASSOC)) {
+  $instrument = $row['site'] . '_' . $row['net'] . '_' . $row['loc'];
   $plotsHtml .= sprintf('<li>
-      <h4>%s_%s_%s</h4>
+      <h4>%s</h4>
       <p>%s km from epicenter</p>
       <a href="%s/%s">
         <img src="%s/data/trigs/tn-%s" alt="NetQuakes seismogram" />
       </a>
     </li>',
-    $row['site'],
-    $row['net'],
-    $row['loc'],
+    $instrument,
     $row['evtdst'],
-    $event,
+    $instrument,
     preg_replace('/[-: ]/', '', $row['datetime']),
     $MOUNT_PATH,
     $row['file']
