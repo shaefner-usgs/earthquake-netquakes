@@ -50,7 +50,7 @@ var connect = {
     },
     {
       from: '^' + MOUNT_PATH + '/viewdata/(.+)/([0-9]+)',
-      to: '/seismogram.php?param=$1&datetime=$2'
+      to: '/seismogram.php?id=$1&datetime=$2'
     },
     {
       from: '^' + MOUNT_PATH + '/viewdata/([^_]+_[^_]+_[^_]+)',
