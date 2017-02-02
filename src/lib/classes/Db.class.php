@@ -98,29 +98,37 @@ class Db {
   }
 
   /**
-   * Get plots - latest plot for each instrument or all plots for a given instrument
+   * Get plots - latest plot for each instrument or all plots for a given instrument / eqid
    *
-   * @param instrument {String}
-   *     optional parameter to get plots for a given instrument
+   * @param param {String}
+   *     optional parameter to get plots for a given instrument / eqid
    *
    * @return {Function}
    */
-  public function queryPlots ($instrument=NULL) {
+  public function queryPlots ($param=NULL) {
     $params = [];
 
-    if ($instrument) {
-      list(
-        $params['site'], $params['net'], $params['loc']
-      ) = explode('_', $instrument);
-      $sql = 'SELECT trigs.datetime, trigs.file, trigs.type, inst.description
-        FROM netq_trigs trigs
-        LEFT JOIN netq_inst inst ON trigs.site = inst.site
-          AND trigs.net = inst.net AND trigs.loc = inst.loc
-        WHERE trigs.site = :site AND trigs.net = :net AND trigs.loc = :loc
-          AND trigs.delete_flag = 0 AND trigs.type != "CAL"
-        ORDER BY `datetime` DESC';
+    if ($param) {
+      if (preg_match('/[^_]+_[^_]+_[^_]+/', $param)) { // instrument
+        list(
+          $params['site'], $params['net'], $params['loc']
+        ) = explode('_', $param);
+        $sql = 'SELECT trigs.type, trigs.datetime, trigs.unixtime, trigs.file, inst.description
+          FROM netq_trigs trigs
+          LEFT JOIN netq_inst inst ON trigs.site = inst.site
+            AND trigs.net = inst.net AND trigs.loc = inst.loc
+          WHERE trigs.site = :site AND trigs.net = :net AND trigs.loc = :loc
+            AND trigs.delete_flag = 0 AND trigs.type != "CAL"
+          ORDER BY `datetime` DESC';
+      }
+      else if (preg_match('/[a-zA-Z]{2}\w{8}/', $param)) { // eqid
+        $params['evtid'] = substr($param, 2); // id and network are stored separately
+        $sql = 'SELECT * FROM netq_trigs
+          WHERE evtid = :evtid AND delete_flag = 0 AND type != "CAL"
+          ORDER BY evtdst ASC';
+      }
     }
-    else {
+    else { // all latest plots
       $sql = 'SELECT `site`, `file`, MAX(`datetime`) AS `datetime`
       FROM netq_trigs
       WHERE `type` != "CAL"
