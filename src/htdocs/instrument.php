@@ -55,12 +55,20 @@ foreach ($types as $key=>$value) {
     }
   }
 }
-$plotsHtml .= '</ul>';
+if ($plotsHtml) {
+  $plotsHtml .= '</ul>';
+} else {
+  $plotsHtml = '<p class="alert info">No seismograms found for this instrument.</p>';
+}
 
-print "<h2>$instrument - $description</h2>";
+$subTitle = $instrument;
+if ($description) {
+  $subTitle .= " - $description";
+}
 
+print "<h2>$subTitle</h2>";
 print $plotsHtml;
 
 ?>
 
-<p class="back">&laquo; <a href="../viewdata">Back to all NetQuakes Data</a></p>
+<p class="back">&laquo; <a href="../viewdata">Back to all NetQuakes data</a></p>
