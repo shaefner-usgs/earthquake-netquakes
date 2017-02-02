@@ -43,7 +43,8 @@ $rsEvents = $db->queryEvents();
 
 $eventList = '<select id="event" name="event">';
 while ($row = $rsEvents->fetch()) {
-  $eventList .= sprintf('<option value="%s">M%s - %s UTC</option>',
+  $eventList .= sprintf('<option value="%s%s">M%s - %s UTC</option>',
+    $row['evtnet'],
     $row['evtid'],
     $row['evtmag'],
     date('M j, Y H:i:s', $row['unixtime'])
