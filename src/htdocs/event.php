@@ -57,3 +57,7 @@ $subTitle = sprintf('M %s Earthquake - %s UTC',
 print "<h2>$subTitle</h2>";
 print '<p><a href="' . $link . '">Earthquake Details</a></p>';
 print $plotsHtml;
+
+?>
+
+<p class="back">&laquo; <a href="../viewdata">Back to NetQuakes Data</a></p>

@@ -57,6 +57,10 @@ foreach ($types as $key=>$value) {
 }
 $plotsHtml .= '</ul>';
 
-print "<h2>$instrument ($description)</h2>";
+print "<h2>$instrument - $description</h2>";
 
 print $plotsHtml;
+
+?>
+
+<p class="back">&laquo; <a href="../viewdata">Back to NetQuakes Data</a></p>
