@@ -49,6 +49,18 @@ var connect = {
       redirect: 'permanent'
     },
     {
+      from: '^' + MOUNT_PATH + '/viewdata/(.+)/([0-9]+)',
+      to: '/seismogram.php?param=$1&datetime=$2'
+    },
+    {
+      from: '^' + MOUNT_PATH + '/viewdata/([^_]+_[^_]+_[^_]+)',
+      to: '/instrument.php?instrument=$1'
+    },
+    {
+      from: '^' + MOUNT_PATH + '/viewdata/([a-zA-Z]{2}[a-zA-Z0-9]{8})',
+      to: '/event.php?event=$1'
+    },
+    {
       from: '^' + MOUNT_PATH + '/viewdata',
       to: '/viewdata.php'
     },
