@@ -62,16 +62,15 @@
     flex: 0 1 auto;
     width: auto;
   }
+  form {
+    display: flex;
+    flex-flow: row wrap;
+  }
   h2 {
     width: 100%;
   }
   select {
     flex: 3;
     width: auto;
-  }
-
-  .column {
-    display: flex;
-    flex-flow: row wrap;
   }
 }
