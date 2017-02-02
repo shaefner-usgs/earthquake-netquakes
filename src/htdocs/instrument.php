@@ -63,4 +63,4 @@ print $plotsHtml;
 
 ?>
 
-<p class="back">&laquo; <a href="../viewdata">Back to NetQuakes Data</a></p>
+<p class="back">&laquo; <a href="../viewdata">Back to all NetQuakes Data</a></p>
