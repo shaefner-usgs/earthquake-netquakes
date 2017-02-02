@@ -148,7 +148,7 @@ class Db {
       }
     }
     else { // get all latest plots
-      $sql = 'SELECT `site`, `file`, MAX(`datetime`) AS `datetime`
+      $sql = 'SELECT `site`, MAX(`file`) as `file`, MAX(`datetime`) AS `datetime`
       FROM netq_trigs
       WHERE `type` != "CAL" AND delete_flag = 0
       GROUP BY `site`';
