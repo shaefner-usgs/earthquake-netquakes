@@ -100,37 +100,54 @@ class Db {
   }
 
   /**
-   * Get plots - latest plot for each instrument or all plots for a given instrument / eqid
+   * Get plot(s)
+   * - all plots for a given event/instrument id; or
+   * - specific plot for a given instrument & time
+   * - all latest plots (one for each instrument);
    *
-   * @param param {String}
-   *     optional parameter to get plots for a given instrument / eqid
+   * @param $id {String}
+   *     optional parameter to get plots for a given event/instrument id
+   * @param $datetime {Integer}
+   *     optional parameter to get a specific plot for a given time
    *
    * @return {Function}
    */
-  public function queryPlots ($param=NULL) {
+  public function queryPlots ($id=NULL, $datetime=NULL) {
     $params = [];
 
-    if ($param) {
-      if (isInstrument($param)) { // instrument
+    if ($id) {
+      if (isInstrument($id)) {
         list(
           $params['site'], $params['net'], $params['loc']
-        ) = explode('_', $param);
-        $sql = 'SELECT trigs.type, trigs.datetime, trigs.unixtime, trigs.file, inst.description
+        ) = explode('_', $id);
+
+        if ($datetime) { // get specific plot matching instrument id and time
+          $params['datetime'] = $datetime;
+          $sql = 'SELECT * FROM netq_trigs trigs
+            LEFT JOIN netq_inst inst ON trigs.site = inst.site
+            WHERE trigs.loc = :loc AND trigs.net = :net AND trigs.site = :site
+              AND trigs.datetime = :datetime';
+        }
+        else { // get all plots matching instrument id
+          // Why does changing order of params break query??
+          //$sql = 'SELECT trigs.datetime, trigs.type, trigs.unixtime, trigs.file, inst.description
+          $sql = 'SELECT trigs.type, trigs.datetime, trigs.unixtime, trigs.file, inst.description
           FROM netq_trigs trigs
-          LEFT JOIN netq_inst inst ON trigs.site = inst.site
-            AND trigs.net = inst.net AND trigs.loc = inst.loc
-          WHERE trigs.site = :site AND trigs.net = :net AND trigs.loc = :loc
+          LEFT JOIN netq_inst inst ON trigs.loc = inst.loc
+            AND trigs.net = inst.net AND trigs.site = inst.site
+          WHERE trigs.loc = :loc AND trigs.net = :net AND trigs.site = :site
             AND trigs.delete_flag = 0 AND trigs.type != "CAL"
           ORDER BY `datetime` DESC';
+        }
       }
-      else if (isEvent($param)) { // eqid
-        $params['evtid'] = substr($param, 2); // id and network are stored separately
+      else if (isEvent($id)) { // get all plots matching event id
+        $params['evtid'] = substr($id, 2); // id and network are stored separately
         $sql = 'SELECT * FROM netq_trigs
-          WHERE evtid = :evtid AND delete_flag = 0 AND type != "CAL"
+          WHERE delete_flag = 0 AND evtid = :evtid AND type != "CAL"
           ORDER BY evtdst ASC';
       }
     }
-    else { // all latest plots
+    else { // get all latest plots
       $sql = 'SELECT `site`, `file`, MAX(`datetime`) AS `datetime`
       FROM netq_trigs
       WHERE `type` != "CAL"
