@@ -64,6 +64,30 @@ function getStateList () {
 }
 
 /**
+ * Check if string matches an event id
+ *
+ * @param $str {String}
+ * @return {Boolean}
+ */
+function isEvent ($str) {
+  if (preg_match('/[a-zA-Z]{2}\w{8}/', $str)) {
+    return true;
+  }
+}
+
+/**
+ * Check if string matches an instrument
+ *
+ * @param $str {String}
+ * @return {Boolean}
+ */
+function isInstrument ($str) {
+  if (preg_match('/[^_]+_[^_]+_[^_]+/', $str)) {
+    return true;
+  }
+}
+
+/**
  * Get a request parameter from $_GET or $_POST
  *
  * @param $name {String}

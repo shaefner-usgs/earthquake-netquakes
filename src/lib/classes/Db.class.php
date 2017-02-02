@@ -1,5 +1,7 @@
 <?php
 
+include_once '../lib/_functions.inc.php'; // app functions
+
 /**
  * Database connector and queries for NetQuakes app
  *
@@ -109,7 +111,7 @@ class Db {
     $params = [];
 
     if ($param) {
-      if (preg_match('/[^_]+_[^_]+_[^_]+/', $param)) { // instrument
+      if (isInstrument($param)) { // instrument
         list(
           $params['site'], $params['net'], $params['loc']
         ) = explode('_', $param);
@@ -121,7 +123,7 @@ class Db {
             AND trigs.delete_flag = 0 AND trigs.type != "CAL"
           ORDER BY `datetime` DESC';
       }
-      else if (preg_match('/[a-zA-Z]{2}\w{8}/', $param)) { // eqid
+      else if (isEvent($param)) { // eqid
         $params['evtid'] = substr($param, 2); // id and network are stored separately
         $sql = 'SELECT * FROM netq_trigs
           WHERE evtid = :evtid AND delete_flag = 0 AND type != "CAL"
