@@ -79,13 +79,17 @@ $eventList .= '</select>';
 
 <div class="row viewdata">
   <div class="column two-of-five">
-    <h2>Instrument List</h2>
-    <?php print $instrumentList; ?>
-    <button name="submit" class="green">View data</button>
+    <form action="instrument.php" method="get" id="instrument">
+      <h2>Instrument List</h2>
+      <?php print $instrumentList; ?>
+      <button class="green" form="instrument" name="submit" type="submit">View data</button>
+    </form>
   </div>
   <div class="column three-of-five">
-    <h2>Event List</h2>
-    <?php print $eventList; ?>
-    <button name="submit" class="green">View data</button>
+    <form action="event.php" method="get" id="event">
+      <h2>Event List</h2>
+      <?php print $eventList; ?>
+      <button class="green" form="event" name="submit" type="submit">View data</button>
+    </form>
   </div>
 </div>
