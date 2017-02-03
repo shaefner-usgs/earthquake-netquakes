@@ -1,46 +1,53 @@
 <?php
 
-function geocode($str2geocode) {
-  $result_json = curlRequest($str2geocode);
-  $result_array = json_decode($result_json, true);
+/**
+ * Geocode a given address
+ *
+ * @param $address {String}
+ *
+ * @return {Array}
+ *     geocoded result
+ */
+function geocode ($address) {
+  $json = curlRequest($address);
+  $result = json_decode($json, true);
 
-  if ($result_array) { // success
+  if ($result) { // success
     return array(
-      array(
-        'lat' => $result_array['results'][0]['locations'][0]['latLng']['lat'],
-        'lon' => $result_array['results'][0]['locations'][0]['latLng']['lng'],
-        'accuracy' => $result_array['results'][0]['locations'][0]['geocodeQuality']
-      )
+      'lat' => $result['results'][0]['locations'][0]['latLng']['lat'],
+      'lon' => $result['results'][0]['locations'][0]['latLng']['lng'],
+      'accuracy' => $result['results'][0]['locations'][0]['geocodeQuality']
     );
-  } else { // unsuccessful; try less specific location
-    $location = trimLocation($str2geocode);
-    if ($location) {
+  } else { // unsuccessful; try less specific address
+    $newAddress = trimAddress($address);
+    if ($newAddress) {
       sleep(.1);
-      return geocode ($location);
+      return geocode ($newAddress);
     }
   }
 }
 
 // Send geocode request
-function curlRequest($location) {
+function curlRequest ($str) {
   $key = 'Fmjtd|luur2h0bn1,2g=o5-9wbnhy';
-  $url = sprintf ('http://www.mapquestapi.com/geocoding/v1/address?key=%s&outFormat=json&location=%s&maxResults=1', $key, urlencode($location));
+  $url = sprintf ('http://www.mapquestapi.com/geocoding/v1/address?key=%s&outFormat=json&location=%s&maxResults=1', $key, urlencode($str));
   $ch = curl_init($url);
+
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
   curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
   curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
   curl_setopt($ch, CURLOPT_FRESH_CONNECT, true);
   $response = curl_exec($ch);
   curl_close($ch);
+
   return $response;
 }
 
-// Remove first part of location string
-function trimLocation($str2trim) {
-  $location_parts = preg_split('/\s*,\s*/', $str2trim);
-  if (count($location_parts) > 1) {
-    array_shift($location_parts);
-    $new_location = implode(',', $location_parts);
-    return $new_location;
+// Remove first (most specific) part of address string
+function trimAddress ($str) {
+  preg_match('/[^,]+,\s*(.*)/', $str, $matches);
+
+  if ($matches) {
+    return $matches[1];
   }
 }
