@@ -31,7 +31,7 @@ var SignupForm = function (options) {
     var button,
         controller;
 
-    button = document.getElementById('submit');
+    button = document.querySelector('#volunteer button');
     button.addEventListener('click', _submitForm);
 
     controller = document.getElementById('toggle');
