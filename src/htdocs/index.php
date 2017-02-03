@@ -19,16 +19,15 @@ if (!isset($TEMPLATE)) {
   </figcaption>
 </figure>
 
-<p>The USGS is trying to achieve a denser and more uniform spacing of
+<p>The USGS is working to achieve a denser and more uniform spacing of
   seismographs in select urban areas to provide better measurements of ground
   motion during earthquakes. These measurements improve our ability to make
   rapid post-earthquake assessments of expected damage and contribute to the
   continuing development of engineering standards for construction.</p>
 
-<p>To accomplish this, we developed a new type of digital seismograph that
-  communicates its data to the USGS via the internet. The seismographs connect
-  to a local network via WiFi and use existing broadband connections to transmit
-  data after an earthquake. The instruments are designed to be installed in
+<p>To accomplish this, we developed a new type of digital seismograph that connects
+  to a local network via WiFi and uses existing broadband connections to transmit
+  data to USGS after an earthquake. The instruments are designed to be installed in
   private homes, businesses, public buildings and schools with an existing
   broadband connection to the internet.</p>
 
