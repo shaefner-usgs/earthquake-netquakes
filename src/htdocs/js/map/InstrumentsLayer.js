@@ -81,7 +81,7 @@ var InstrumentsLayer = function (options) {
 
     if (props.file) {
       imgLink = MOUNT_PATH + '/viewdata/' + name + '/' + timestamp;
-      imgSrc = MOUNT_PATH + '/data/trigs/' + props.file;
+      imgSrc = MOUNT_PATH + '/data/trigs/tn-' + props.file;
 
       img = '<a href="' + imgLink + '"><img src="' + imgSrc + '" /></a>';
     }
