@@ -5,14 +5,31 @@ include_once '../lib/_functions.inc.php'; // app functions
 /**
  * Database connector and queries for NetQuakes app
  *
+ * @param $connectionType {String} default is NULL
+ *     pass in 'write' to create a connection with write privileges
+ *
  * @author Scott Haefner <shaefner@usgs.gov>
  */
 class Db {
   private static $db;
+  private $_pdo;
 
-  public function __construct() {
+  public function __construct($connectionType=NULL) {
+    if ($connectionType === 'write') {
+      $this->_pdo = [
+        'db' => $GLOBALS['DB_WRITE_DSN'],
+        'user' => $GLOBALS['DB_WRITE_USER'],
+        'pass' => $GLOBALS['DB_WRITE_PASS']
+      ];
+    } else {
+      $this->_pdo = [
+        'db' => $GLOBALS['DB_DSN'],
+        'user' => $GLOBALS['DB_USER'],
+        'pass' => $GLOBALS['DB_PASS']
+      ];
+    }
     try {
-      $this->db = new PDO($GLOBALS['DB_DSN'], $GLOBALS['DB_USER'], $GLOBALS['DB_PASS']);
+      $this->db = new PDO($this->_pdo['db'], $this->_pdo['user'], $this->_pdo['pass']);
       $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     } catch (PDOException $e) {
       print '<p class="alert error">ERROR 1: ' . $e->getMessage() . '</p>';
@@ -71,6 +88,23 @@ class Db {
     }
 
     return $type;
+  }
+
+  /**
+   * Insert record into db
+   *
+   * @param $sql {String}
+   *     valid SQL insert statement
+   * @param $params {Array}
+   *     substitution values for insert sql
+   *
+   * @return {Function}
+   */
+  public function insert($sql, $params=NULL) {
+    if (!$params) {
+      $params = [];
+    }
+    return $this->_execQuery($sql, $params);
   }
 
   /**
