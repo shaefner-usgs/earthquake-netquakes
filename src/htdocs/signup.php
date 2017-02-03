@@ -28,7 +28,43 @@ $datetime = date('Y-m-d H:i:s');
 $posting = false;
 
 if (isSet($_POST['submit'])) { // user submitted form
+  $db = new Db;
+  $dbWRite = new Db('write');
   $posting = true;
+
+  // Attempt to geocode address
+  $address = sprintf('',
+    $_POST['address1'],
+    $_POST['address2'],
+    $_POST['city'],
+    $_POST['state']
+  );
+  $geo = [ // defaults
+    'lat' => 0,
+    'lon' => 0,
+    'accuracy' => ''
+  ];
+  $geo = geocode($address);
+
+  // Attempt to set region code, etc for address entered by user
+  // first set defaults, then override if address falls within a defined polygon
+  $regionCode = '';
+  $regionContacts = 'luetgert@usgs.gov, oppen@usgs.gov, amcclain@usgs.gov';
+  $regionMsg = '';
+
+  $rsRegions = $db->queryRegions('signup');
+  $regions = getRegions($rsRegions->fetchAll(PDO::FETCH_ASSOC));
+  foreach($regions as $region) {
+    if ($geo['lat'] >= $region['s'] &&
+      $geo['lat'] <= $region['n'] &&
+      $geo['lon'] >= $region['w'] &&
+      $geo['lon'] <= $region['e']
+    ) {
+      $regionCode = $region['code'];
+      $regionContacts = $region['contacts'];
+      $regionMsg = $region['message'];
+    }
+  }
 
   $fields = [
     'name' => $_POST['name'],
@@ -43,18 +79,19 @@ if (isSet($_POST['submit'])) { // user submitted form
     'hearabout' => $_POST['hearabout'],
     'wifi' => $_POST['wifi'],
     'comment' => $_POST['comment'],
-    'glat' => $_POST['glat'],
-    'glon' => $_POST['glon'],
-    'gaccuracy' => $_POST['gaccuracy'],
-    'region' => $_POST['region'],
     'maddress1' => $_POST['maddress1'],
     'maddress2' => $_POST['maddress2'],
     'mcity' => $_POST['mcity'],
     'mstate' => $_POST['mstate'],
-    'mpostcode' => $_POST['mpostcode']
+    'mpostcode' => $_POST['mpostcode'],
+    'glat' => $geo['lat'],
+    'glon' => $geo['lon'],
+    'gaccuracy' => $geo['accuracy'],
+    'region' => $regionCode,
+    'datetime' => $datetime,
   ];
 
-  // if no Mailing Address provided, use Installation Address
+  // If no Mailing Address provided, use Installation Address
   if (!$_POST['maddress1']) {
     $fields['maddress1'] = $_POST['address1'];
     $fields['maddress2'] = $_POST['address2'];
@@ -64,33 +101,66 @@ if (isSet($_POST['submit'])) { // user submitted form
   }
 
   // Insert record
-  $stmt = $pdo->prepare('INSERT INTO nca_netq_volunteers (datetime, name, email,
-    affiliation, phone, address1, address2, city, state, postcode, hearabout,
-    wifi, comment, glat, glon, gaccuracy, region, maddress1, maddress2, mcity,
-    mstate, mpostcode) VALUES (:datetime, :name, :email, :affiliation, :phone,
-    :address1, :address2, :city, :state, :postcode, :hearabout, :wifi, :comment,
-    :glat, :glon, :gaccuracy, :region, :maddress1, :maddress2, :mcity,
-    :mstate, :mpostcode)'
-  );
+  $sql = 'INSERT INTO nca_netq_volunteers (`datetime`, `name`, `email`,
+    `affiliation`, `phone`, `address1`, `address2`, `city`, `state`, `postcode`,
+    `hearabout`, `wifi`, `comment`, `maddress1`, `maddress2`, `mcity`, `mstate`,
+    `mpostcode`, `glat`, `glon`, `gaccuracy`, `region`)
+    VALUES (:datetime, :name, :email, :affiliation, :phone, :address1,
+    :address2, :city, :state, :postcode, :hearabout, :wifi, :comment,
+    :maddress1, :maddress2, :mcity, :mstate, :mpostcode, :glat, :glon,
+    :gaccuracy, :region)';
   try {
-    //$stmt->execute($fields);
+    $dbWRite->insert($sql, $fields);
   } catch (Exception $e) {
     print "Error: $e->getMessage()";
   }
+
   // Create summary html
-  $return_html .= '<ul class="no-style results">
+  $noteHtml = "<p>Thank you for volunteering to host a NetQuakes seismograph.
+    We will review your request and contact you if your location is a good match.
+    Requests are contingent on current availability of instruments and the
+    relative priority for instrumenting various regions.</p>";
+
+  $returnHtml .= '<ul class="no-style results">
       <li><h4>Name</h4> ' . htmlentities(stripslashes($fields['name'])) . '</li>
       <li><h4>Affiliation</h4> ' . htmlentities(stripslashes($fields['affiliation'])) . '</li>
-      <li><h4>Email</h4> ' . htmlentities(stripslashes($fields['email'])) . '</li>
-      <li><h4>Phone</h4> ' . htmlentities(stripslashes($fields['phone'])) . '</li>
+      <li><h4>Email address</h4> ' . htmlentities(stripslashes($fields['email'])) . '</li>
+      <li><h4>Phone number</h4> ' . htmlentities(stripslashes($fields['phone'])) . '</li>
       <li><h4>Address 1</h4> ' . htmlentities(stripslashes($fields['address1'])) . '</li>
       <li><h4>Address 2</h4> ' . htmlentities(stripslashes($fields['address2'])) . '</li>
       <li><h4>City</h4> ' . htmlentities(stripslashes($fields['city'])) . '</li>
       <li><h4>State</h4> ' . htmlentities(stripslashes($fields['state'])) . '</li>
-      <li><h4>Zip</h4> ' . htmlentities(stripslashes($fields['zip'])) . '</li>
+      <li><h4>Zip code</h4> ' . htmlentities(stripslashes($fields['postcode'])) . '</li>
+      <li><h4>Comments</h4> ' . htmlentities(stripslashes($fields['comment'])) . '</li>
     </ul>';
 
-  print $return_html;
+  print $noteHtml;
+  if ($regionMsg) {
+    print "<p><strong>Please note</strong>: $regionMsg</p>";
+  }
+  print $returnHtml;
+
+  // Send out email alerts
+  $headers = 'MIME-Version: 1.0' . "\r\n";
+  $headers .= 'Content-type: text/html;charset=UTF-8' . "\r\n";
+  $headers .= 'From: netquakes@usgs.gov' . "\r\n";
+  $subject = 'NetQuakes Volunteer Request';
+
+  // Email managers
+  $message = $returnHtml;
+  //mail($regionContacts, $subject, $message, $headers);
+
+  // Email user
+  $to = htmlentities(stripslashes($fields['email']));
+  $message = 'Dear ' . htmlentities(stripslashes($fields['name'])) . ',<br>';
+  $message .= $noteHtml;
+  if ($regionMsg) {
+    $message .= "<p>$regionMsg</p>";
+  }
+  $message .= "<p>Thanks again,<br><br>The NetQuakes Team</p>";
+
+  mail($to, $subject, $message, $headers);
+
   return;
 } else {
   $statelist = getStateList();
@@ -138,7 +208,7 @@ if (isSet($_POST['submit'])) { // user submitted form
       <label for="email">Email address <span>*</span></label>
       <input type="text" required="required" pattern="^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A_Za-z]{2,4}$" name="email" id="email" tabindex="3" />
       <label for="phone">Phone number <span>*</span></label>
-      <input type="number" required="required" name="phone" id="phone" tabindex="4" />
+      <input type="text" required="required" name="phone" id="phone" tabindex="4" />
       <h3>Optional</h3>
       <label for="hearabout">Where did you hear about the NetQuakes program?</label>
       <select name="hearabout" id="hearabout" tabindex="5" >
@@ -174,7 +244,7 @@ if (isSet($_POST['submit'])) { // user submitted form
         <?php print $statelist; ?>
       </select>
       <label for="mpostcode">Zip code <span>*</span></label>
-      <input type="number" disabled="disabled" required="required" name="mpostcode" id="mpostcode" tabindex="12" />
+      <input type="text" disabled="disabled" required="required" name="mpostcode" id="mpostcode" tabindex="12" />
     </div>
 
     <div class="column one-of-two">
@@ -191,12 +261,12 @@ if (isSet($_POST['submit'])) { // user submitted form
         <?php print $statelist; ?>
       </select>
       <label for="postcode">Zip code <span>*</span></label>
-      <input type="number" required="required" name="postcode" id="postcode" tabindex="17" />
+      <input type="text" required="required" name="postcode" id="postcode" tabindex="17" />
       <label for="country">Country</label>
       <input type="text" value="United States" disabled="disabled" name="country" id="country" tabindex="" />
     </div>
 
   </div>
   <p class="required">* = Required Info</p>
-  <button class="green" form="volunteer" type="submit" tabindex="18">Volunteer</button>
+  <button class="green" form="volunteer" name="submit" type="submit" tabindex="18">Volunteer</button>
 </form>
