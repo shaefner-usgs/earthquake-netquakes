@@ -32,10 +32,12 @@ var SignupForm = function (options) {
         controller;
 
     button = document.querySelector('#volunteer button');
-    button.addEventListener('click', _submitForm);
-
     controller = document.getElementById('toggle');
-    controller.addEventListener('click', _toggleForm);
+
+    if (button && controller) {
+      button.addEventListener('click', _submitForm);
+      controller.addEventListener('click', _toggleForm);
+    }
   };
 
   /**
