@@ -159,6 +159,26 @@ class Db {
   }
 
   /**
+   * Get regions
+   *
+   * @param $type {String}
+   *     optional parameter to filter results by type (signup, viewdata)
+   *
+   * @return {Function}
+   */
+  public function queryRegions ($type=NULL) {
+    $whereClause = '';
+    if ($type) {
+      $whereClause = "WHERE `type` = '$type'";
+    }
+    $sql = "SELECT * FROM netq_regions
+      $whereClause
+      ORDER BY `name` ASC";
+
+    return $this->_execQuery($sql);
+  }
+
+  /**
    * Get requested points
    *
    * @return {Function}
