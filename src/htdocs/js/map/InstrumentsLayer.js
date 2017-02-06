@@ -4,6 +4,8 @@
 
 var Util = require('util/Util');
 
+require('leaflet.label');
+
 
 var _DEFAULTS,
     _OVERLAY_DEFAULTS;
@@ -105,7 +107,7 @@ var InstrumentsLayer = function (options) {
 
     layer.bindPopup(popup, {
       autoPanPadding: L.point(50, 10)
-    });
+    }).bindLabel(name);
   };
 
   /**
