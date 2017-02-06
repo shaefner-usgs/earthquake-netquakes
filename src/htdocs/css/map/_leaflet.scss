@@ -1,9 +1,10 @@
+@import 'leaflet.label.css';
 @import '_variables.scss';
 
-/* template's css is getting the way */
 .map {
   height: 700px;
 
+  /* template's css is getting the way */
   input[type=checkbox], input[type=radio] {
     display: inline;
     height: auto;
