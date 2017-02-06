@@ -33,7 +33,7 @@ if (isSet($_POST['submit'])) { // user submitted form
   $posting = true;
 
   // Attempt to geocode address
-  $address = sprintf('',
+  $address = sprintf('%s, %s, %s, %s',
     $_POST['address1'],
     $_POST['address2'],
     $_POST['city'],
@@ -46,23 +46,24 @@ if (isSet($_POST['submit'])) { // user submitted form
   ];
   $geo = geocode($address);
 
-  // Attempt to set region code, etc for address entered by user
-  // first set defaults, then override if address falls within a defined polygon
-  $regionCode = '';
-  $regionContacts = 'luetgert@usgs.gov, oppen@usgs.gov, amcclain@usgs.gov';
-  $regionMsg = '';
-
+  // Attempt to set userRegion (code, contacts, etc) based on address entered
+  // create an array that is more friendly to parse
   $rsRegions = $db->queryRegions('signup');
   $regions = getRegions($rsRegions->fetchAll(PDO::FETCH_ASSOC));
+
+  // set defaults, then override if address falls within a defined polygon
+  $userRegion = [
+    'code' => '',
+    'contacts' => 'luetgert@usgs.gov, oppen@usgs.gov, amcclain@usgs.gov',
+    'message' => ''
+  ];
   foreach($regions as $region) {
     if ($geo['lat'] >= $region['s'] &&
       $geo['lat'] <= $region['n'] &&
       $geo['lon'] >= $region['w'] &&
       $geo['lon'] <= $region['e']
     ) {
-      $regionCode = $region['code'];
-      $regionContacts = $region['contacts'];
-      $regionMsg = $region['message'];
+      $userRegion = $region;
     }
   }
 
@@ -87,7 +88,7 @@ if (isSet($_POST['submit'])) { // user submitted form
     'glat' => $geo['lat'],
     'glon' => $geo['lon'],
     'gaccuracy' => $geo['accuracy'],
-    'region' => $regionCode,
+    'region' => $userRegion['code'],
     'datetime' => $datetime,
   ];
 
@@ -135,8 +136,8 @@ if (isSet($_POST['submit'])) { // user submitted form
     </ul>';
 
   print $noteHtml;
-  if ($regionMsg) {
-    print "<p><strong>Please note</strong>: $regionMsg</p>";
+  if ($userRegion['message']) {
+    print "<p><strong>Please note</strong>: {$userRegion['message']}</p>";
   }
   print $returnHtml;
 
@@ -148,14 +149,14 @@ if (isSet($_POST['submit'])) { // user submitted form
 
   // Email managers
   $message = $returnHtml;
-  //mail($regionContacts, $subject, $message, $headers);
+  //mail($userRegion['contacts'], $subject, $message, $headers);
 
   // Email user
   $to = htmlentities(stripslashes($fields['email']));
   $message = 'Dear ' . htmlentities(stripslashes($fields['name'])) . ',<br>';
   $message .= $noteHtml;
-  if ($regionMsg) {
-    $message .= "<p>$regionMsg</p>";
+  if ($userRegion['message']) {
+    $message .= "<p>{$userRegion['message']}</p>";
   }
   $message .= "<p>Thanks again,<br><br>The NetQuakes Team</p>";
 
