@@ -1,19 +1,6 @@
 @import 'leaflet.label.css';
 @import '_variables.scss';
 
-.map {
-  height: 700px;
-
-  /* template's css is getting the way */
-  input[type=checkbox], input[type=radio] {
-    display: inline;
-    height: auto;
-    opacity: 1;
-    position: static;
-    width: auto;
-  }
-}
-
 /* Quell long attributions */
 .leaflet-control-attribution {
   max-width: 300px;
@@ -49,23 +36,4 @@
 /* use template's color for links in popups */
 .leaflet-popup-content a {
   color: $link-color;
-}
-
-/* shrink map height on small displays */
-@media all and (max-height: 667px) {
-  .map {
-    height: 500px;
-  }
-}
-
-@media all and (max-height: 500px) {
-  .map {
-    height: 400px;
-  }
-}
-
-@media all and (max-height: 400px) {
-  .map {
-    height: 300px;
-  }
 }
