@@ -24,8 +24,13 @@ $PROMPTS = array(
     'default' => str_replace('/apps/', '/data/', $APP_DIR),
     'secure' => false
   ),
+  'DATA_HOST' => array(
+    'prompt' => 'Host where data files are served',
+    'default' => 'localhost',
+    'secure' => false
+  ),
   'DB_DSN' => array(
-    'prompt' => 'Database connection DSN string',
+    'prompt' => 'Read-only database connection DSN string',
     'default' => 'mysql:host=localhost;port=3306;dbname=dbname',
     'secure' => false
   ),
@@ -35,7 +40,22 @@ $PROMPTS = array(
     'secure' => false
   ),
   'DB_PASS' => array(
-    'prompt' => 'Password for database user',
+    'prompt' => 'Read-only password for database user',
+    'default' => '',
+    'secure' => true
+  ),
+  'DB_WRITE_DSN' => array(
+    'prompt' => 'Write Database connection DSN string',
+    'default' => 'mysql:host=localhost;port=3306;dbname=dbname',
+    'secure' => false
+  ),
+  'DB_WRITE_USER' => array(
+    'prompt' => 'Write username for database connections',
+    'default' => 'webwrite',
+    'secure' => false
+  ),
+  'DB_WRITE_PASS' => array(
+    'prompt' => 'Write Password for database user',
     'default' => '',
     'secure' => true
   )
