@@ -113,10 +113,11 @@ class Db {
    * @return {Function}
    */
   public function queryEvents () {
-    $sql = 'SELECT * FROM `netq_trigs`
+    $sql = 'SELECT `evtid`, MAX(`evtnet`) AS evtnet, MAX(`unixtime`) AS unixtime,
+      MAX(`evtmag`) AS evtmag FROM `netq_trigs`
       WHERE evtid != "" AND delete_flag = 0
       GROUP BY `evtid`
-      ORDER BY `evttime` DESC';
+      ORDER BY `unixtime` DESC';
 
     return $this->_execQuery($sql);
   }
