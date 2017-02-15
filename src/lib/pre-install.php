@@ -55,17 +55,23 @@ file_put_contents($HTTPD_CONF, '
 
   RewriteEngine on
 
-  RewriteRule ^(' . $MOUNT_PATH . ')(.*)/+$ ' .
-    $MOUNT_PATH . '$1$2 [L,PT]
-  RewriteRule ^' . $MOUNT_PATH . '/viewdata/(.+)/([0-9]+) ' .
+  # Strip trailing slash
+  RewriteRule ^' . $MOUNT_PATH . '(.*)/+$ ' .
+    $MOUNT_PATH . '$1 [L,R=301]
+
+  # Prevent apache from adding trailing slash on "real" directories by explicitly requesting index.php
+  RewriteRule ^' . $MOUNT_PATH . '$ /monitoring/netquakes/index.php [L,PT]
+
+  # Pretty URLs
+  RewriteRule ^' . $MOUNT_PATH . '/viewdata/(.+)/([0-9]+)$ ' .
     $MOUNT_PATH . '/seismogram.php?instrument=$1&datetime=$2 [L,PT]
-  RewriteRule ^' . $MOUNT_PATH . '/viewdata/([^_]+_[^_]+_[^_]+) ' .
+  RewriteRule ^' . $MOUNT_PATH . '/viewdata/([^_]+_[^_]+_[^_]+)$ ' .
     $MOUNT_PATH . '/instrument.php?instrument=$1 [L,PT]
-  RewriteRule ^' . $MOUNT_PATH . '/viewdata/([a-zA-Z]{2}[a-zA-Z0-9]{8}) ' . 
+  RewriteRule ^' . $MOUNT_PATH . '/viewdata/([a-zA-Z]{2}[a-zA-Z0-9]{8})$ ' .
     $MOUNT_PATH . '/event.php?event=$1 [L,PT]
-  RewriteRule ^' . $MOUNT_PATH . '/viewdata ' .
+  RewriteRule ^' . $MOUNT_PATH . '/viewdata$ ' .
     $MOUNT_PATH . '/viewdata.php [L,PT]
-  RewriteRule ^' . $MOUNT_PATH . '/signup ' .
+  RewriteRule ^' . $MOUNT_PATH . '/signup$ ' .
     $MOUNT_PATH . '/signup.php [L,PT]
 
   <Location ' . $MOUNT_PATH . '>
