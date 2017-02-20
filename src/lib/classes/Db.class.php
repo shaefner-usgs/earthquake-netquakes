@@ -202,15 +202,18 @@ class Db {
    * @return {Function}
    */
   public function queryRegions ($type=NULL) {
+    $params = [];
     $whereClause = '';
+
     if ($type) {
-      $whereClause = "WHERE `type` = '$type'";
+      $params['type'] =  $type;
+      $whereClause = "WHERE `type` = :type";
     }
     $sql = "SELECT * FROM netq_regions
       $whereClause
       ORDER BY `name` ASC";
 
-    return $this->_execQuery($sql);
+    return $this->_execQuery($sql, $params);
   }
 
   /**
