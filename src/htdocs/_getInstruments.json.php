@@ -48,13 +48,13 @@ while ($row = $rsInstruments->fetch(PDO::FETCH_ASSOC)) {
     ],
     'id' => 'point' . intval($row['id']),
     'properties' => [
-      "site" => $site,
-      "net" => $row['net'],
-      "loc" => $row['loc'],
-      "description" => $row['description'],
-      "status" => $row['status'],
-      "file" => $file,
-      "datetime" => $datetime
+      'site' => $site,
+      'net' => $row['net'],
+      'loc' => $row['loc'],
+      'description' => $row['description'],
+      'status' => $row['status'],
+      'file' => $file,
+      'datetime' => $datetime
     ],
     'type' => 'Feature'
   ];
