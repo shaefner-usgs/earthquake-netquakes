@@ -1,8 +1,14 @@
 @import '_common.scss';
 @import '_thumbnails.scss';
+@import '_variables.scss';
 
+h2 {
+  margin-top: 0;
+}
 h3 {
   background: #e2ede7;
-  margin: 2em 0 -1em 0;
+  color: #5d615f;
+  font: 1.2em $font-sans normal;
+  margin: 1.5em 0 -1em 0;
   padding: 3px 5px;
 }
