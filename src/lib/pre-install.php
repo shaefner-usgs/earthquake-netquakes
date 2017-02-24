@@ -50,10 +50,11 @@ $MOUNT_PATH = $CONFIG['MOUNT_PATH'];
 $DATA_DIR = $CONFIG['DATA_DIR'];
 
 // Set up Apache Aliases
-$aliases = "Alias $MOUNT_PATH $HTDOCS_DIR";
+$aliases = '';
 if ($DATA_DIR) {
-  $aliases .= "\n  Alias $MOUNT_PATH/data $DATA_DIR";
+  $aliases .= "Alias $MOUNT_PATH/data $DATA_DIR";
 }
+$aliases .= "\n  Alias $MOUNT_PATH $HTDOCS_DIR";
 
 // Write the HTTPD configuration file
 file_put_contents($HTTPD_CONF, '
