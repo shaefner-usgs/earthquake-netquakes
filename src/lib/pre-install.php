@@ -87,9 +87,10 @@ file_put_contents($HTTPD_CONF, '
     Order allow,deny
     Allow from all
 
-    <LimitExcept GET>
-      deny from all
-    </LimitExcept>
+    # 02/27/17, SAH: Commented out b/c it is blocking post request of form
+    #<LimitExcept GET>
+    #  deny from all
+    #</LimitExcept>
 
     ExpiresActive on
     ExpiresDefault "access plus 1 days"
