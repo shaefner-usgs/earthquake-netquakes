@@ -47,11 +47,11 @@ if (isSet($_POST['submit'])) { // user submitted form
   $geo = geocode($address);
 
   // Attempt to set userRegion (code, contacts, etc) based on address entered
-  // create an array that is more friendly to parse
+  // create an array ($regions) that is friendly to parse
   $rsRegions = $db->queryRegions('signup');
   $regions = getRegions($rsRegions->fetchAll(PDO::FETCH_ASSOC));
 
-  // set defaults, then override if address falls within a defined polygon
+  // set defaults and override if address falls within a defined polygon
   $userRegion = [
     'code' => '',
     'contacts' => 'luetgert@usgs.gov, oppen@usgs.gov, amcclain@usgs.gov',
@@ -144,12 +144,12 @@ if (isSet($_POST['submit'])) { // user submitted form
   // Send out email alerts
   $headers = 'MIME-Version: 1.0' . "\r\n";
   $headers .= 'Content-type: text/html;charset=UTF-8' . "\r\n";
-  $headers .= 'From: netquakes@usgs.gov' . "\r\n";
+  $headers .= 'From: netquakes-NOREPLY@usgs.gov' . "\r\n";
   $subject = 'NetQuakes Volunteer Request';
 
   // Email managers
   $message = $returnHtml;
-  //mail($userRegion['contacts'], $subject, $message, $headers);
+  mail($userRegion['contacts'], $subject, $message, $headers);
 
   // Email user
   $to = htmlentities(stripslashes($fields['email']));
