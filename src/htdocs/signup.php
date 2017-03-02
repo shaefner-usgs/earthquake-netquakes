@@ -271,3 +271,4 @@ if (isSet($_POST['submit'])) { // user submitted form
   <p class="required">* = Required Info</p>
   <button class="green" form="volunteer" name="submit" type="submit" tabindex="18">Volunteer</button>
 </form>
+<p><a href="https://www2.usgs.gov/laws/privacy.html">USGS Privacy Policy</a></p>
