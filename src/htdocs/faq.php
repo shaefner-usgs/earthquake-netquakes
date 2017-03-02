@@ -225,7 +225,7 @@ Images of the previous 30 days of triggered accelerograms from your instrument a
 What will the USGS do with the earthquake data from the NetQuakes seismograph?
 </h4>
 <p>
-Real-time software will automatically incorporate the data for computing <a href="https://earthquake.usgs.gov/earthquakes/shakemap/">ShakeMaps</a>,
+Real-time software will automatically incorporate the data for computing <a href="https://earthquake.usgs.gov/data/shakemap/">ShakeMaps</a>,
 improving earthquake locations and magnitudes, and determining the fault orientation.
 If the magnitude is greater than about 5, we will also use the seismograms to calculate the amount of fault displacement that occurred during
 the earthquake.
@@ -324,7 +324,7 @@ to return the old batteries or seismograph to us free of charge.
 I am moving. What do I do with the NetQuakes seismograph?
 </h4>
 <p>
-Please <a href="https://earthquake.usgs.gov/contactus/?to=jbrody">contact us</a>  and we will arrange to remove the seismograph.
+Please <a href="mailto:jbrody@usgs.gov">contact us</a>  and we will arrange to remove the seismograph.
 If the new owner desires to keep it operating, please ask them to contact us to make new WiFi and other arrangements.
 </p>
 
