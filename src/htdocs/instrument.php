@@ -8,7 +8,10 @@ $instrument = safeParam('instrument');
 
 // User submitted form w/o javascript; fwd to "friendly" (rewrite) URI
 if(isset($_GET['submit'])) {
-  $uri = "viewdata/$instrument";
+  // URL encode to protect against CRLF injection/HTTP response splitting
+  $uri = urlencode("viewdata/$instrument");
+  // decode '/' char so request is routed correctly
+  $uri = str_replace('%2F', '/', $uri);
   header("Location: $uri");
 }
 
