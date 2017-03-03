@@ -8,7 +8,7 @@ $event = safeParam('event');
 
 // User submitted form w/o javascript; fwd to "friendly" (rewrite) URI
 if(isset($_GET['submit'])) {
-  $uri = "viewdata/$event";
+  $uri = urlencode("viewdata/$event");
   header("Location: $uri");
 }
 

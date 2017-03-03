@@ -8,7 +8,7 @@ $instrument = safeParam('instrument');
 
 // User submitted form w/o javascript; fwd to "friendly" (rewrite) URI
 if(isset($_GET['submit'])) {
-  $uri = "viewdata/$instrument";
+  $uri = urlencode("viewdata/$instrument");
   header("Location: $uri");
 }
 
