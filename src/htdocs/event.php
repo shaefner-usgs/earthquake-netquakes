@@ -8,7 +8,10 @@ $event = safeParam('event');
 
 // User submitted form w/o javascript; fwd to "friendly" (rewrite) URI
 if(isset($_GET['submit'])) {
+  // URL encode to protect against CRLF injection/HTTP response splitting
   $uri = urlencode("viewdata/$event");
+  // decode '/' char so request is routed correctly
+  $uri = str_replace('%2F', '/', $uri);
   header("Location: $uri");
 }
 
