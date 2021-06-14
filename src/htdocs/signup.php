@@ -3,6 +3,7 @@
 include_once '../conf/config.inc.php'; // app config
 include_once '../lib/_functions.inc.php'; // app functions
 include_once '../lib/classes/Db.class.php'; // db connector, queries
+include_once 'lib/akismet.class.php'; // anti-spam filter
 
 if (!isset($TEMPLATE)) {
   $TITLE = 'NetQuakes Sign Up';
@@ -28,141 +29,159 @@ $datetime = date('Y-m-d H:i:s');
 $posting = false;
 
 if (isSet($_POST['submit'])) { // user submitted form
-  $db = new Db;
-  $dbWRite = new Db('write');
-  $posting = true;
-
-  // Attempt to geocode address
-  $address = sprintf('%s, %s, %s, %s',
-    $_POST['address1'],
-    $_POST['address2'],
-    $_POST['city'],
-    $_POST['state']
+  $apiKey = 'cdf66359883d';
+  $userContent = array(
+     'author'    => $_POST['name'],
+     'email'     => $_POST['email'],
+     'body'      => $_POST['comment'],
+     'permalink' => 'https://earthquake.usgs.gov/monitoring/netquakes/signup',
+     'type'      => 'contact-form'
   );
-  $geo = [ // defaults
-    'lat' => 0,
-    'lon' => 0,
-    'accuracy' => ''
-  ];
-  $geo = geocode($address);
+  $akismet = new Akismet('https://earthquake.usgs.gov/', $apiKey, $userContent);
 
-  // Attempt to set userRegion (code, contacts, etc) based on address entered
-  // create an array ($regions) that is friendly to parse
-  $rsRegions = $db->queryRegions('signup');
-  $regions = getRegions($rsRegions->fetchAll(PDO::FETCH_ASSOC));
+  if ($akismet->errorsExist()) {
+    echo '<p class="alert error">Could not connected to Akismet server.</p>';
+  } else {
+    if ($akismet->isSpam()) {
+      echo '<p class="alert error">Spam detected.</p>';
+    } else {
+      $db = new Db;
+      $dbWRite = new Db('write');
+      $posting = true;
 
-  // set defaults and override if address falls within a defined polygon
-  $userRegion = [
-    'code' => '',
-    'contacts' => 'luetgert@usgs.gov, oppen@usgs.gov, amcclain@usgs.gov',
-    'message' => ''
-  ];
-  foreach($regions as $region) {
-    if ($geo['lat'] >= $region['s'] &&
-      $geo['lat'] <= $region['n'] &&
-      $geo['lon'] >= $region['w'] &&
-      $geo['lon'] <= $region['e']
-    ) {
-      $userRegion = $region;
+      // Attempt to geocode address
+      $address = sprintf('%s, %s, %s, %s',
+        $_POST['address1'],
+        $_POST['address2'],
+        $_POST['city'],
+        $_POST['state']
+      );
+      $geo = [ // defaults
+        'lat' => 0,
+        'lon' => 0,
+        'accuracy' => ''
+      ];
+      $geo = geocode($address);
+
+      // Attempt to set userRegion (code, contacts, etc) based on address entered
+      // create an array ($regions) that is friendly to parse
+      $rsRegions = $db->queryRegions('signup');
+      $regions = getRegions($rsRegions->fetchAll(PDO::FETCH_ASSOC));
+
+      // set defaults and override if address falls within a defined polygon
+      $userRegion = [
+        'code' => '',
+        'contacts' => 'luetgert@usgs.gov, oppen@usgs.gov, amcclain@usgs.gov',
+        'message' => ''
+      ];
+      foreach($regions as $region) {
+        if ($geo['lat'] >= $region['s'] &&
+          $geo['lat'] <= $region['n'] &&
+          $geo['lon'] >= $region['w'] &&
+          $geo['lon'] <= $region['e']
+        ) {
+          $userRegion = $region;
+        }
+      }
+
+      $fields = [
+        'name' => $_POST['name'],
+        'email' => $_POST['email'],
+        'affiliation' => $_POST['affiliation'],
+        'phone' => $_POST['phone'],
+        'address1' => $_POST['address1'],
+        'address2' => $_POST['address2'],
+        'city' => $_POST['city'],
+        'state' => $_POST['state'],
+        'postcode' => $_POST['postcode'],
+        'hearabout' => $_POST['hearabout'],
+        'wifi' => $_POST['wifi'],
+        'comment' => $_POST['comment'],
+        'maddress1' => $_POST['maddress1'],
+        'maddress2' => $_POST['maddress2'],
+        'mcity' => $_POST['mcity'],
+        'mstate' => $_POST['mstate'],
+        'mpostcode' => $_POST['mpostcode'],
+        'glat' => $geo['lat'],
+        'glon' => $geo['lon'],
+        'gaccuracy' => $geo['accuracy'],
+        'region' => $userRegion['code'],
+        'datetime' => $datetime,
+      ];
+
+      // If no Mailing Address provided, use Installation Address
+      if (!$_POST['maddress1']) {
+        $fields['maddress1'] = $_POST['address1'];
+        $fields['maddress2'] = $_POST['address2'];
+        $fields['mcity']     = $_POST['city'];
+        $fields['mstate']    = $_POST['state'];
+        $fields['mpostcode'] = $_POST['postcode'];
+      }
+
+      // Insert record
+      $sql = 'INSERT INTO nca_netq_volunteers (`datetime`, `name`, `email`,
+        `affiliation`, `phone`, `address1`, `address2`, `city`, `state`, `postcode`,
+        `hearabout`, `wifi`, `comment`, `maddress1`, `maddress2`, `mcity`, `mstate`,
+        `mpostcode`, `glat`, `glon`, `gaccuracy`, `region`)
+        VALUES (:datetime, :name, :email, :affiliation, :phone, :address1,
+        :address2, :city, :state, :postcode, :hearabout, :wifi, :comment,
+        :maddress1, :maddress2, :mcity, :mstate, :mpostcode, :glat, :glon,
+        :gaccuracy, :region)';
+      try {
+        $dbWRite->insert($sql, $fields);
+      } catch (Exception $e) {
+        print "Error: $e->getMessage()";
+      }
+
+      // Create summary html
+      $noteHtml = "<p>Thank you for volunteering to host a NetQuakes seismograph.
+        We will review your request and contact you if your location is a good match.
+        Requests are contingent on current availability of instruments and the
+        relative priority for instrumenting various regions.</p>";
+
+      $returnHtml .= '<ul class="no-style results">
+          <li><h4>Name</h4> ' . htmlentities(stripslashes($fields['name'])) . '</li>
+          <li><h4>Affiliation</h4> ' . htmlentities(stripslashes($fields['affiliation'])) . '</li>
+          <li><h4>Email address</h4> ' . htmlentities(stripslashes($fields['email'])) . '</li>
+          <li><h4>Phone number</h4> ' . htmlentities(stripslashes($fields['phone'])) . '</li>
+          <li><h4>Address 1</h4> ' . htmlentities(stripslashes($fields['address1'])) . '</li>
+          <li><h4>Address 2</h4> ' . htmlentities(stripslashes($fields['address2'])) . '</li>
+          <li><h4>City</h4> ' . htmlentities(stripslashes($fields['city'])) . '</li>
+          <li><h4>State</h4> ' . htmlentities(stripslashes($fields['state'])) . '</li>
+          <li><h4>Zip code</h4> ' . htmlentities(stripslashes($fields['postcode'])) . '</li>
+          <li><h4>Comments</h4> ' . htmlentities(stripslashes($fields['comment'])) . '</li>
+        </ul>';
+
+      print $noteHtml;
+      if ($userRegion['message']) {
+        print "<p><strong>Please note</strong>: {$userRegion['message']}</p>";
+      }
+      print $returnHtml;
+
+      // Send out email alerts
+      $headers = 'MIME-Version: 1.0' . "\r\n";
+      $headers .= 'Content-type: text/html;charset=UTF-8' . "\r\n";
+      $headers .= 'From: netquakes-NOREPLY@usgs.gov' . "\r\n";
+      $subject = 'NetQuakes Volunteer Request';
+
+      // Email managers
+      $message = $returnHtml;
+      mail($userRegion['contacts'], $subject, $message, $headers);
+
+      // Email user
+      $to = htmlentities(stripslashes($fields['email']));
+      $message = 'Dear ' . htmlentities(stripslashes($fields['name'])) . ',<br>';
+      $message .= $noteHtml;
+      if ($userRegion['message']) {
+        $message .= "<p>{$userRegion['message']}</p>";
+      }
+      $message .= "<p>Thanks again,<br><br>The NetQuakes Team</p>";
+
+      mail($to, $subject, $message, $headers);
+
+      return;
     }
   }
-
-  $fields = [
-    'name' => $_POST['name'],
-    'email' => $_POST['email'],
-    'affiliation' => $_POST['affiliation'],
-    'phone' => $_POST['phone'],
-    'address1' => $_POST['address1'],
-    'address2' => $_POST['address2'],
-    'city' => $_POST['city'],
-    'state' => $_POST['state'],
-    'postcode' => $_POST['postcode'],
-    'hearabout' => $_POST['hearabout'],
-    'wifi' => $_POST['wifi'],
-    'comment' => $_POST['comment'],
-    'maddress1' => $_POST['maddress1'],
-    'maddress2' => $_POST['maddress2'],
-    'mcity' => $_POST['mcity'],
-    'mstate' => $_POST['mstate'],
-    'mpostcode' => $_POST['mpostcode'],
-    'glat' => $geo['lat'],
-    'glon' => $geo['lon'],
-    'gaccuracy' => $geo['accuracy'],
-    'region' => $userRegion['code'],
-    'datetime' => $datetime,
-  ];
-
-  // If no Mailing Address provided, use Installation Address
-  if (!$_POST['maddress1']) {
-    $fields['maddress1'] = $_POST['address1'];
-    $fields['maddress2'] = $_POST['address2'];
-    $fields['mcity']     = $_POST['city'];
-    $fields['mstate']    = $_POST['state'];
-    $fields['mpostcode'] = $_POST['postcode'];
-  }
-
-  // Insert record
-  $sql = 'INSERT INTO nca_netq_volunteers (`datetime`, `name`, `email`,
-    `affiliation`, `phone`, `address1`, `address2`, `city`, `state`, `postcode`,
-    `hearabout`, `wifi`, `comment`, `maddress1`, `maddress2`, `mcity`, `mstate`,
-    `mpostcode`, `glat`, `glon`, `gaccuracy`, `region`)
-    VALUES (:datetime, :name, :email, :affiliation, :phone, :address1,
-    :address2, :city, :state, :postcode, :hearabout, :wifi, :comment,
-    :maddress1, :maddress2, :mcity, :mstate, :mpostcode, :glat, :glon,
-    :gaccuracy, :region)';
-  try {
-    $dbWRite->insert($sql, $fields);
-  } catch (Exception $e) {
-    print "Error: $e->getMessage()";
-  }
-
-  // Create summary html
-  $noteHtml = "<p>Thank you for volunteering to host a NetQuakes seismograph.
-    We will review your request and contact you if your location is a good match.
-    Requests are contingent on current availability of instruments and the
-    relative priority for instrumenting various regions.</p>";
-
-  $returnHtml .= '<ul class="no-style results">
-      <li><h4>Name</h4> ' . htmlentities(stripslashes($fields['name'])) . '</li>
-      <li><h4>Affiliation</h4> ' . htmlentities(stripslashes($fields['affiliation'])) . '</li>
-      <li><h4>Email address</h4> ' . htmlentities(stripslashes($fields['email'])) . '</li>
-      <li><h4>Phone number</h4> ' . htmlentities(stripslashes($fields['phone'])) . '</li>
-      <li><h4>Address 1</h4> ' . htmlentities(stripslashes($fields['address1'])) . '</li>
-      <li><h4>Address 2</h4> ' . htmlentities(stripslashes($fields['address2'])) . '</li>
-      <li><h4>City</h4> ' . htmlentities(stripslashes($fields['city'])) . '</li>
-      <li><h4>State</h4> ' . htmlentities(stripslashes($fields['state'])) . '</li>
-      <li><h4>Zip code</h4> ' . htmlentities(stripslashes($fields['postcode'])) . '</li>
-      <li><h4>Comments</h4> ' . htmlentities(stripslashes($fields['comment'])) . '</li>
-    </ul>';
-
-  print $noteHtml;
-  if ($userRegion['message']) {
-    print "<p><strong>Please note</strong>: {$userRegion['message']}</p>";
-  }
-  print $returnHtml;
-
-  // Send out email alerts
-  $headers = 'MIME-Version: 1.0' . "\r\n";
-  $headers .= 'Content-type: text/html;charset=UTF-8' . "\r\n";
-  $headers .= 'From: netquakes-NOREPLY@usgs.gov' . "\r\n";
-  $subject = 'NetQuakes Volunteer Request';
-
-  // Email managers
-  $message = $returnHtml;
-  mail($userRegion['contacts'], $subject, $message, $headers);
-
-  // Email user
-  $to = htmlentities(stripslashes($fields['email']));
-  $message = 'Dear ' . htmlentities(stripslashes($fields['name'])) . ',<br>';
-  $message .= $noteHtml;
-  if ($userRegion['message']) {
-    $message .= "<p>{$userRegion['message']}</p>";
-  }
-  $message .= "<p>Thanks again,<br><br>The NetQuakes Team</p>";
-
-  mail($to, $subject, $message, $headers);
-
-  return;
 } else {
   $statelist = getStateList();
 }
