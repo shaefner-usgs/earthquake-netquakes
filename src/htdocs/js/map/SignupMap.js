@@ -2,7 +2,7 @@
 'use strict';
 
 
-var Xhr = require('util/Xhr');
+var Xhr = require('hazdev-webutils/src/util/Xhr');
 
 // Factories for creating map layers (returns e.g. "L.earthquakesLayer()")
 require('map/DarkLayer');
