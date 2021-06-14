@@ -13,7 +13,10 @@
     "test": "grunt test"
   },
   "license": "CC0-1.0",
-  "dependencies": {},
+  "dependencies": {
+    "leaflet": "^0.7.7",
+    "leaflet.label": "git://github.com/jmfee-usgs/Leaflet.label.git#external-leaflet",
+  },
   "devDependencies": {
     "autoprefixer": "6.0.3",
     "babel-preset-es2015": "6.9.0",
@@ -39,8 +42,6 @@
     "hazdev-template": "0.2.4",
     "hazdev-webutils": "0.1.8",
     "ini": "1.2.1",
-    "leaflet": "^0.7.7",
-    "leaflet.label": "git://github.com/jmfee-usgs/Leaflet.label.git#external-leaflet",
     "mocha": "2.1.0",
     "postcss-calc": "5.0.0",
     "postcss-import": "7.1.0",
